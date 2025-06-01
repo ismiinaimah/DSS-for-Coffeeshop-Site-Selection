@@ -23,11 +23,10 @@ background_base64 = get_base64_of_bin_file(image_path)
 st.set_page_config(page_title="📍 Decision Support System for Coffee Shop Site Selection in D.I. Yogyakarta",
                    layout="wide")
 
-# Update your CSS section with these modifications:
-
+# Sisipkan CSS dengan gambar sebagai latar belakang halaman utama
 st.markdown(f"""
     <style>
-    /* 🌆 Background utama aplikasi */
+    /* Set background image for main app */
     .stApp {{
         background-image: url("data:image/jpg;base64,{background_base64}");
         background-size: cover;
@@ -37,121 +36,112 @@ st.markdown(f"""
         color: #ECD6C2;
     }}
 
-    /* 🏷️ Label input */
-    label {{
-        color: #ECD6C2 !important;
-        font-weight: bold;
-    }}
-
-    /* 🔝 Header */
+    /* Header */
     header[data-testid="stHeader"] {{
         background-color: transparent;
         color: #1C120C;
     }}
 
-    /* 📚 Sidebar latar dan gambar */
+    /* Sidebar */
     section[data-testid="stSidebar"] > div:first-child {{
-        background-color: rgba(69, 41, 1, 0.9);
+        background-color: rgba(69, 41, 1, 0.9); /* semitransparan */
         background-image: url("data:image/png;base64,{sidebar_base64}");
-        background-repeat: repeat;
+        background-repeat: repeat; /* atau no-repeat */
         background-position: center;
-        background-size: 800px 1200px;
+        background-size: 800px 1200px; /* Sesuaikan ukuran biji kopi */
         color: #7B5C43;
     }}
-    section[data-testid="stSidebar"] .block-container {{
-        margin-top: -4rem;
-    }}
+
+    /* Sidebar text color + bold */
     section[data-testid="stSidebar"] * {{
-        color: #7B5C43 !important;
+        color: #3D2614 !important;  /* Coklat pekat */
         font-weight: bold !important;
     }}
 
-    /* 🎯 Input angka */
-    div[data-baseweb="input"] input[type="number"] {{
-        color: #1C120C !important;
-        background-color: #F3F3F3 !important;
+    /* Input fields and widgets */
+    .stTextInput, .stNumberInput, .stSelectbox, .stSlider, .stRadio {{
+        color: #ECD6C2;
     }}
 
+    /* Dataframe background */
+    .stDataFrame {{ background-color: rgba(69, 41, 1, 0.8); }}
 
-    /* 🔘 Tombol utama */
-    div.stButton > button:first-child {{
-        background-color: #5A189A;
+    /* Buttons */
+    button[kind="primary"] {{
+        background-color: #4c2c04;
         color: white;
-        border-radius: 8px;
-        height: 3em;
-        width: 100%;
-        font-weight: bold;
-    }}
-    div.stButton > button:hover {{
-        background-color: #7B2CBF;
+        border-radius: 5px;
     }}
 
-    /* 🧩 Input teks dan angka */
-    div.stTextInput > div > div > input,
-    div.stNumberInput > div > div > input,
-    .stSelectbox > div > div,
-    .stSlider > div,
-    .stRadio > div,
-    div[data-baseweb="input"] input {{
-        color: #2B1700 !important;
-        background-color: rgba(255, 255, 255, 0.85) !important;
-        border: 1px solid #ECD6C2 !important;
-        border-radius: 4px !important;
-        padding: 8px 12px !important;
+    /* Titles and Headers */
+    h1, h2, h3, h4, h5, h6 {{
+        color: #ECD6C2;
     }}
 
-    /* 🩹 Placeholder dan focus */
-    div[data-baseweb="input"] input::placeholder {{
-        color: #A88D7A !important;
-        opacity: 1 !important;
-    }}
-    div[data-baseweb="input"] input:focus {{
-        border-color: #FFD7AE !important;
-        box-shadow: 0 0 0 0.2rem rgba(236, 214, 194, 0.25) !important;
-    }}
-
-    div[role="alert"] {{
-        color: #FDB9C8 !important; 
-        font-weight: bold !important;
-    }}
-
-    /* 📊 Dataframe background */
-    .stDataFrame {{
-        background-color: rgba(69, 41, 1, 0.8);
-    }}
-
-    /* 📝 Judul dan subjudul */
-    h1, h2, h3, h4, h5, h6,
     .stMarkdown, .stSubheader, .stHeader, .stText, .stExpander {{
         color: #ECD6C2 !important;
     }}
 
-    /* 🔲 Container utama */
     .block-container {{
         padding: 1rem;
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.4); /* tambahkan lapisan semi-transparan agar teks tetap terbaca */
         border-radius: 10px;
-    }}
-
-    /* 🆕 Root input text */
-    div[data-testid="textInputRootElement"] {{
-        background-color: rgba(255, 255, 255, 0.05) !important;
-    }}
-    div[data-baseweb="input"] {{
-        background-color: transparent !important;
     }}
     </style>
 """, unsafe_allow_html=True)
 
+# st.markdown(f"""
+#     <style>
+#     /* Set primary colors and fonts */
+#     body, .stApp {{
+#         background-color: #452901;
+#         color: #ECD6C2;
+#     }}
 
-st.markdown("""
-<div style="background-color: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;
-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); margin-top: 0px; margin-bottom: 15px;">
-<h4 style='color: #ECD6C2;'>📌 Tentang Aplikasi</h4>
-<p style='color: #ECD6C2;'>Aplikasi ini membantu dalam menentukan alternatif lokasi untuk penempatan coffeshop.
-Gunakan input di sidebar untuk menambahkan kriteria dan nilai, lalu klik tombol untuk melihat hasilnya.</p>
-</div>
-""", unsafe_allow_html=True)
+#     /* Streamlit main header bar */
+#     header[data-testid="stHeader"] {{
+#         background-color: #452901;
+#         color: #ECD6C2;
+#     }}
+
+#     /* Sidebar background with image */
+#     section[data-testid="stSidebar"] > div:first-child {{
+#         background-image: url("data:image/jpg;base64,{sidebar_base64}");
+#         background-size: cover;
+#         background-repeat: no-repeat;
+#         background-position: center;
+#         color: #452901;
+#     }}
+
+#     /* Input fields and widgets */
+#     .stTextInput, .stNumberInput, .stSelectbox, .stSlider, .stRadio {{
+#         color: #ECD6C2;
+#     }}
+
+#     /* Dataframe background */
+#     .stDataFrame {{ background-color: #452901; }}
+
+#     /* Buttons */
+#     button[kind="primary"] {{
+#         background-color: #4c2c04;
+#         color: black;
+#         border-radius: 5px;
+#     }}
+
+#     /* Titles and Headers */
+#     h1, h2, h3, h4, h5, h6 {{
+#         color: #ECD6C2;
+#     }}
+
+#     .stMarkdown, .stSubheader, .stHeader, .stText, .stExpander {{
+#         color: #ECD6C2 !important;
+#     }}
+
+#     .block-container {{
+#         padding: 1rem;
+#     }}
+#     </style>
+# """, unsafe_allow_html=True)
 
 # Set the title and subheader for the app
 st.title("📍 Decision Support System for Coffee Shop Site Selection in D.I. Yogyakarta")
@@ -218,7 +208,6 @@ if selected_tab == "☕ Weighting":
                     with col2:
                         if higher_priority == criteria[i]:
                             prompt = f"How much more important is {criteria[i]} compared to {criteria[j]}?"
-
                         else:
                             prompt = f"How much more important is {criteria[j]} compared to {criteria[i]}?"
 
@@ -264,15 +253,8 @@ elif selected_tab == "☕ AHP + TOPSIS":
         is_benefit = []
         for i in range(len(criteria)):
             previous_type = st.session_state.get(f"type_{i}", "Benefit")
-            # ctype = st.selectbox(f"Criteria Type for '{criteria[i]}'", ["Benefit", "Cost"], key=f"type_{i}")
-            ctype = st.selectbox(
-                f"Criteria Type for '{criteria[i]}'",
-                ["Benefit", "Cost"],
-                key=f"{criteria[i]}"
-            )
-            st.write(f"✅ Anda memilih: {ctype} untuk kriteria '{criteria[i]}'")
+            ctype = st.selectbox(f"Criteria Type for '{criteria[i]}'", ["Benefit", "Cost"], key=f"type_{i}")
             is_benefit.append(ctype == "Benefit")
-
 
         st.subheader("📥 Input Decision Matrix")
         st.markdown("🧾 Please fill in values for each alternative against the criteria (in scale 1 to 10):")
@@ -396,7 +378,6 @@ elif selected_tab == "☕ AHP + Profile Matching":
                 ["CF (Core Factor)", "SF (Secondary Factor)"],
                 key=f"cf_sf_{i}"
             )
-            st.write(f"✅ Anda memilih: {factor} untuk kriteria '{crit}'")
             cf_flags.append(factor.startswith("CF"))
 
         # Calculate total weights for CF and SF based on AHP results
