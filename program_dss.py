@@ -1,15 +1,17 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from rumus import calculate_ahp_weights, topsis, profile_matching 
+from rumus import calculate_ahp_weights, topsis, profile_matching
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+
 
 # Fungsi untuk encode gambar lokal sebagai base64
 def get_base64_of_bin_file(bin_file_path):
     with open(bin_file_path, 'rb') as f:
         return base64.b64encode(f.read()).decode()
+
 
 # Ganti dengan nama file gambar kamu
 image_path = "kopi.jpg"
@@ -18,7 +20,8 @@ sidebar_base64 = get_base64_of_bin_file(overlay_image_path)
 background_base64 = get_base64_of_bin_file(image_path)
 # background_base64 = sidebar_base64  # Use the same image for background, or load a different one if desired
 
-st.set_page_config(page_title="📍 Decision Support System for Coffee Shop Site Selection in D.I. Yogyakarta", layout="wide")
+st.set_page_config(page_title="📍 Decision Support System for Coffee Shop Site Selection in D.I. Yogyakarta",
+                   layout="wide")
 
 # Update your CSS section with these modifications:
 
@@ -34,20 +37,20 @@ st.markdown(f"""
         color: #ECD6C2;
     }}
 
-    /* 🏷️ Label input (seperti "Criterion Name") */
+    /* 🏷️ Label input */
     label {{
         color: #ECD6C2 !important;
         font-weight: bold;
     }}
 
-    /* 🔝 Header Streamlit (bagian atas) */
+    /* 🔝 Header */
     header[data-testid="stHeader"] {{
         background-color: transparent;
         color: #1C120C;
     }}
 
     /* 📚 Sidebar latar dan gambar */
-    section[data-testid="stSidebar"] > div:first-child{{
+    section[data-testid="stSidebar"] > div:first-child {{
         background-color: rgba(69, 41, 1, 0.9);
         background-image: url("data:image/png;base64,{sidebar_base64}");
         background-repeat: repeat;
@@ -58,39 +61,32 @@ st.markdown(f"""
     section[data-testid="stSidebar"] .block-container {{
         margin-top: -4rem;
     }}
-
-
-    /* 📝 Warna teks sidebar */
     section[data-testid="stSidebar"] * {{
         color: #7B5C43 !important;
         font-weight: bold !important;
     }}
 
-    /* 🎯 Input angka (number input) */
+    /* 🎯 Input angka */
     div[data-baseweb="input"] input[type="number"] {{
         color: #1C120C !important;
         background-color: #F3F3F3 !important;
     }}
 
-    /* ⛔ Jika input readonly / disabled */
-    div[data-baseweb="input"] input:disabled {{
-        color: #7B5C43 !important;
-        opacity: 1 !important;
-    }}
 
+    /* 🔘 Tombol utama */
     div.stButton > button:first-child {{
-    background-color: #5A189A;
-    color: white;
-    border-radius: 8px;
-    height: 3em;
-    width: 100%;
-    font-weight: bold;
+        background-color: #5A189A;
+        color: white;
+        border-radius: 8px;
+        height: 3em;
+        width: 100%;
+        font-weight: bold;
     }}
     div.stButton > button:hover {{
         background-color: #7B2CBF;
     }}
 
-    /* 🧩 Input teks - NEW IMPROVED VERSION */
+    /* 🧩 Input teks dan angka */
     div.stTextInput > div > div > input,
     div.stNumberInput > div > div > input,
     .stSelectbox > div > div,
@@ -104,32 +100,24 @@ st.markdown(f"""
         padding: 8px 12px !important;
     }}
 
-    /* 🩹 Placeholder dan efek focus - UPDATED */
+    /* 🩹 Placeholder dan focus */
     div[data-baseweb="input"] input::placeholder {{
         color: #A88D7A !important;
         opacity: 1 !important;
     }}
-
     div[data-baseweb="input"] input:focus {{
         border-color: #FFD7AE !important;
         box-shadow: 0 0 0 0.2rem rgba(236, 214, 194, 0.25) !important;
     }}
 
     div[role="alert"] {{
-    color: #FDB9C8 !important; 
-    font-weight: bold !important;
+        color: #FDB9C8 !important; 
+        font-weight: bold !important;
     }}
 
     /* 📊 Dataframe background */
     .stDataFrame {{
         background-color: rgba(69, 41, 1, 0.8);
-    }}
-
-    /* 🔘 Tombol utama */
-    button[kind="primary"] {{
-        background-color: #4c2c04;
-        color: white;
-        border-radius: 5px;
     }}
 
     /* 📝 Judul dan subjudul */
@@ -145,18 +133,16 @@ st.markdown(f"""
         border-radius: 10px;
     }}
 
-    /* NEW: Specific styling for text inputs */
+    /* 🆕 Root input text */
     div[data-testid="textInputRootElement"] {{
         background-color: rgba(255, 255, 255, 0.05) !important;
     }}
-
-    /* NEW: Style for all input containers */
     div[data-baseweb="input"] {{
         background-color: transparent !important;
     }}
-
     </style>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <div style="background-color: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;
@@ -185,20 +171,21 @@ if selected_tab == "☕ Weighting":
     num_criteria = st.number_input("Number of Criteria", min_value=2, value=3, step=1, key="num_criteria")
     num_alternatives = st.number_input("Number of Alternatives", min_value=2, value=3, step=1, key="num_alternatives")
 
-    criteria = [st.text_input(f"Criterion Name {i+1}", key=f"crit_{i}") for i in range(num_criteria)]
-    alternatives = [st.text_input(f"Alternative Name {i+1}", key=f"alt_{i}") for i in range(num_alternatives)]
-    
+    criteria = [st.text_input(f"Criterion Name {i + 1}", key=f"crit_{i}") for i in range(num_criteria)]
+    alternatives = [st.text_input(f"Alternative Name {i + 1}", key=f"alt_{i}") for i in range(num_alternatives)]
+
     # Ensure criteria names are unique and non-empty
-    if len(set([c.strip() for c in criteria if c.strip() != ""])) != len(criteria) or any(c.strip() == "" for c in criteria):
+    if len(set([c.strip() for c in criteria if c.strip() != ""])) != len(criteria) or any(
+            c.strip() == "" for c in criteria):
         st.error("All criteria names must be unique and non-empty.")
-    
+
     if all(criteria) and all(alternatives) and len(set([c.strip() for c in criteria])) == len(criteria):
         st.markdown("---")
         st.header("2️⃣ Pairwise Comparison of Criteria")
-    
-    # if all(criteria) and all(alternatives):
-    #     st.markdown("---")
-    #     st.header("2️⃣ Pairwise Comparison of Criteria")
+
+        # if all(criteria) and all(alternatives):
+        #     st.markdown("---")
+        #     st.header("2️⃣ Pairwise Comparison of Criteria")
 
         A = np.ones((num_criteria, num_criteria))
         # Pairwise comparison (AHP)
@@ -277,15 +264,22 @@ elif selected_tab == "☕ AHP + TOPSIS":
         is_benefit = []
         for i in range(len(criteria)):
             previous_type = st.session_state.get(f"type_{i}", "Benefit")
-            ctype = st.selectbox(f"Criteria Type for '{criteria[i]}'", ["Benefit", "Cost"], key=f"type_{i}")
+            # ctype = st.selectbox(f"Criteria Type for '{criteria[i]}'", ["Benefit", "Cost"], key=f"type_{i}")
+            ctype = st.selectbox(
+                f"Criteria Type for '{criteria[i]}'",
+                ["Benefit", "Cost"],
+                key=f"{criteria[i]}"
+            )
+            st.write(f"✅ Anda memilih: {ctype} untuk kriteria '{criteria[i]}'")
             is_benefit.append(ctype == "Benefit")
+
 
         st.subheader("📥 Input Decision Matrix")
         st.markdown("🧾 Please fill in values for each alternative against the criteria (in scale 1 to 10):")
 
         matrix_df = pd.DataFrame(np.ones((len(alternatives), len(criteria))),
-                     columns=criteria, index=alternatives)
-        
+                                 columns=criteria, index=alternatives)
+
         matrix_df = st.data_editor(matrix_df, use_container_width=True, num_rows="fixed")
 
         # Check if any value exceeds 10
@@ -309,8 +303,9 @@ elif selected_tab == "☕ AHP + TOPSIS":
             st.dataframe(result_df.sort_values(by="Ranking"), use_container_width=True)
             st.success("TOPSIS calculation completed successfully.")
             best_alternative = result_df[result_df["Ranking"] == 1].iloc[0]
-            st.success(f"⭐ The best alternative is **{best_alternative['Alternative']}** with a score of {best_alternative['TOPSIS Score']:.4f}.")
-            
+            st.success(
+                f"⭐ The best alternative is **{best_alternative['Alternative']}** with a score of {best_alternative['TOPSIS Score']:.4f}.")
+
             # Visualization of TOPSIS Scores
             st.subheader("📊 Visualization of TOPSIS Scores")
 
@@ -336,7 +331,7 @@ elif selected_tab == "☕ AHP + TOPSIS":
                 file_name="topsis_scores.png",
                 mime="image/png"
             )
-        
+
             # # Map Overlay (Yogyakarta with Pins)
             # st.subheader("🗺️ Location Overlay: Yogyakarta Map")
 
@@ -363,7 +358,7 @@ elif selected_tab == "☕ AHP + TOPSIS":
             # st_folium(m, width=700, height=450)
 
 
-# Tab 3: Profile Matching 
+# Tab 3: Profile Matching
 elif selected_tab == "☕ AHP + Profile Matching":
     st.header("☕ Profile Matching Method")
 
@@ -380,15 +375,16 @@ elif selected_tab == "☕ AHP + Profile Matching":
 
         ideal_values = []
         for i, crit in enumerate(criteria):
-            ideal_value = st.number_input(f"Enter ideal value for '{crit}' (1-5)", min_value=1, max_value=5, key=f"ideal_{i}")
-            
+            ideal_value = st.number_input(f"Enter ideal value for '{crit}' (1-5)", min_value=1, max_value=5,
+                                          key=f"ideal_{i}")
+
             # Error check: Ensure ideal value is within range
             if ideal_value < 1 or ideal_value > 5:
                 st.error(f"Ideal value for '{crit}' must be between 1 and 5.")
             else:
                 ideal_values.append(ideal_value)
-        
-        #st.markdown(f"**Ideal Values Scale:** 1 (lowest) to 5 (highest)")
+
+        # st.markdown(f"**Ideal Values Scale:** 1 (lowest) to 5 (highest)")
 
         # Input for core and secondary factors
         st.subheader("⚙️ Define Core Factor (CF) and Secondary Factor (SF)")
@@ -400,6 +396,7 @@ elif selected_tab == "☕ AHP + Profile Matching":
                 ["CF (Core Factor)", "SF (Secondary Factor)"],
                 key=f"cf_sf_{i}"
             )
+            st.write(f"✅ Anda memilih: {factor} untuk kriteria '{crit}'")
             cf_flags.append(factor.startswith("CF"))
 
         # Calculate total weights for CF and SF based on AHP results
@@ -423,7 +420,7 @@ elif selected_tab == "☕ AHP + Profile Matching":
             st.error("⚠️ The total CF weight must be greater than 50%. Please adjust the CF/SF selection.")
         else:
             st.success("✅ CF/SF selection is valid. You can proceed to the next step.")
-        
+
         # Input for decision matrix
         st.subheader("📥 Input Decision Matrix")
 
@@ -452,7 +449,7 @@ elif selected_tab == "☕ AHP + Profile Matching":
         # Check if any value exceeds 5
         if (decision_matrix_df > 5).any().any():
             st.warning("Some values exceed 5 and have been automatically capped at 5.")
-        
+
         # Auto-correct any input values outside the range [1, 5]
         decision_matrix_df = decision_matrix_df.clip(lower=1, upper=5)
 
@@ -461,13 +458,13 @@ elif selected_tab == "☕ AHP + Profile Matching":
 
         # Setelah input Core Factor (CF) dan Secondary Factor (SF) oleh pengguna
         cf_sf_grouping = ["CF" if is_cf else "SF" for is_cf in cf_flags]
-        
+
         # Button to calculate Profile Matching
         if st.button("🔍 Calculate Location Ranking (Profile Matching)"):
             # ideal_profile = ideal_values
             matrix_pm = decision_matrix_df.values.tolist()
             cf_sf_grouping = ["CF" if is_cf else "SF" for is_cf in cf_flags]
-            
+
             # Use ideal_values from user input
             scores_pm, ranking_order_pm = profile_matching(
                 ideal=ideal_values,
@@ -475,7 +472,7 @@ elif selected_tab == "☕ AHP + Profile Matching":
                 weights=weights,
                 cf_sf_grouping=cf_sf_grouping
             )
-            
+
             # Sorting the scores based on profile matching
             # ranking_order_pm = np.argsort(-np.array(scores_pm))
             result_df_pm = pd.DataFrame({
@@ -487,11 +484,12 @@ elif selected_tab == "☕ AHP + Profile Matching":
             # Display the results
             st.subheader("🏆 Profile Matching Calculation Results")
             st.dataframe(result_df_pm, use_container_width=True, hide_index=True)
-                         
+
             # Display the best alternative and its score
             best_pm = result_df_pm[result_df_pm["Ranking"] == 1].iloc[0]
             st.success("Profile Matching calculation completed successfully.")
-            st.success(f"⭐ The best alternative is **{best_pm['Alternative']}** with a Profile Matching score of {best_pm['Profile Matching Score']:.4f}.")
+            st.success(
+                f"⭐ The best alternative is **{best_pm['Alternative']}** with a Profile Matching score of {best_pm['Profile Matching Score']:.4f}.")
 
             # Visualization of Profile Matching Scores
             st.subheader("📊 Visualization of Profile Matching Scores")
@@ -499,7 +497,8 @@ elif selected_tab == "☕ AHP + Profile Matching":
             # Create a bar chart using matplotlib
             fig_pm, ax_pm = plt.subplots()
             result_df_pm_sorted = result_df_pm.sort_values(by="Ranking")
-            ax_pm.bar(result_df_pm_sorted["Alternative"], result_df_pm_sorted["Profile Matching Score"], color='saddlebrown')
+            ax_pm.bar(result_df_pm_sorted["Alternative"], result_df_pm_sorted["Profile Matching Score"],
+                      color='saddlebrown')
             ax_pm.set_title("Profile Matching Scores")
             ax_pm.set_xlabel("Alternative")
             ax_pm.set_ylabel("Score")
